@@ -1,4 +1,5 @@
 import socket
+import os
 
 
 class DATA_CONNECTION:
@@ -8,8 +9,21 @@ class DATA_CONNECTION:
             self.SOCKET.listen()
 
             self.CONNECTION, self.ADDRESS = self.SOCKET.accept()
-            print("data connection:", self.CONNECTION.recv(1024).decode())
-            self.CONNECTION.sendall(b"hello ! I'm A Data Connection !")
+            self.message = self.CONNECTION.recv(1024).decode().split(" ")
+            self.command = self.message[0]
+            self.filename = self.message[1]
+
+            if self.command == "LIST":
+                self.CONNECTION.sendall(",".join(os.listdir()).encode())
+
+            if self.command == "RETR":
+                with open(f"{self.filename}", "r+") as file:
+                    CONTENT: str = file.read()
+                
+                self.CONNECTION.sendall(CONTENT.encode())
+
+            if self.command == "STOR":
+                print(self.filename, self.message[2])
 
             self.CONNECTION.close()
 
