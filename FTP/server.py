@@ -1,3 +1,5 @@
+import data_connection
+import threading
 import socket
 
 
@@ -12,10 +14,21 @@ class SERVER:
             
             while True:
                 self.CONNECTION, self.ADDRESS = self.SOCKET.accept()
-                print("server:", self.CONNECTION.recv(1024).decode())
+                
+                command, filename = self.CONNECTION.recv(1024).decode().split(" ")
+
+                data_connection_thread = threading.Thread(target=self.connect_data_connection, args=(command, filename))
+                data_connection_thread.start()
+
                 self.CONNECTION.sendall(f"{self.DATA_CONNECTION_HOST}:{self.DATA_CONNECTION_PORT}".encode())
                 self.CONNECTION.close()
 
+    def connect_data_connection(self, command: str, fileName: str):
+        DATA_CONNECTION_HOST: str = "127.0.0.1"
+        DATA_CONNECTION_PORT: int = 2020
+        DC = data_connection.DATA_CONNECTION(DATA_CONNECTION_HOST, DATA_CONNECTION_PORT, command, fileName)
+
 
 if __name__ == "__main__":
-    server: SERVER = SERVER()
+    server_thread = threading.Thread(target= SERVER)
+    server_thread.start()
