@@ -5,7 +5,7 @@ class CLIENT:
     def __init__(self, host:str="127.0.0.1", port:int=8080):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as self.SOCKET:
             self.SOCKET.connect((host, port))
-            self.SOCKET.sendall(b"RETR client.py")
+            self.SOCKET.sendall(b"LIST")
 
             DC_HOST, DC_PORT = self.SOCKET.recv(1024).decode().split(":")
             print(f"{DC_HOST} : {DC_PORT}")

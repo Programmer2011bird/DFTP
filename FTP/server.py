@@ -15,9 +15,16 @@ class SERVER:
             while True:
                 self.CONNECTION, self.ADDRESS = self.SOCKET.accept()
                 
-                command, filename = self.CONNECTION.recv(1024).decode().split(" ")
+                message = self.CONNECTION.recv(1024).decode().split(" ")
+                self.command = message[0]
+                
+                if self.command != "LIST":
+                    self.filename = message[1]
+                
+                else:
+                    self.filename = ""
 
-                data_connection_thread = threading.Thread(target=self.connect_data_connection, args=(command, filename))
+                data_connection_thread = threading.Thread(target=self.connect_data_connection, args=(self.command, self.filename))
                 data_connection_thread.start()
 
                 self.CONNECTION.sendall(f"{self.DATA_CONNECTION_HOST}:{self.DATA_CONNECTION_PORT}".encode())
