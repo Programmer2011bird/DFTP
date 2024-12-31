@@ -1,3 +1,4 @@
+import sha256_calculator
 import socket
 import os
 
@@ -20,13 +21,22 @@ class DATA_CONNECTION:
                 with open(f"{self.filename}", "r+") as file:
                     CONTENT: str = file.read()
                 
-                self.CONNECTION.sendall(CONTENT.encode())
+                SHA256_hash: str = sha256_calculator.calculate_sha256(CONTENT)
+                self.CONNECTION.sendall(CONTENT.encode() + b"\r\n||" + SHA256_hash.encode())
 
             if self.command == "STOR":
-                self.fileContent = self.CONNECTION.recv(1024).decode()
-                print(self.filename, self.fileContent)
-                
-                with open(f"{self.filename}", "w+") as file:
-                    file.write(self.fileContent)
+                self.fullMessage: bytes = self.CONNECTION.recv(1024)
+                self.fileContent, self.RECIEVED_SHA256_HASH = self.fullMessage.split(b"\r\n||")
 
-            self.CONNECTION.close()
+                self.CALCULATED_SHA256_HASH: str = sha256_calculator.calculate_sha256(str(self.fileContent.decode()))
+
+                if self.CALCULATED_SHA256_HASH == self.RECIEVED_SHA256_HASH.decode():
+                    with open(f"{self.filename}", "w+") as file:
+                        file.write(self.fileContent.decode())
+
+                    print("✅ File Integrity Verified !")
+
+                elif self.CALCULATED_SHA256_HASH != self.RECIEVED_SHA256_HASH.decode():
+                    print("❌ File Integrity Failed !")
+
+            self.CONNECTION.close() 
