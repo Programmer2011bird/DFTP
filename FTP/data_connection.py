@@ -25,5 +25,8 @@ class DATA_CONNECTION:
             if self.command == "STOR":
                 self.fileContent = self.CONNECTION.recv(1024).decode()
                 print(self.filename, self.fileContent)
+                
+                with open(f"{self.filename}", "w+") as file:
+                    file.write(self.fileContent)
 
             self.CONNECTION.close()
