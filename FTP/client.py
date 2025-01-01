@@ -3,7 +3,7 @@ import socket
 
 
 class CLIENT:
-    def __init__(self, host:str="127.0.0.1", port:int=8080, COMMAND:str=""):
+    def __init__(self, host:str="192.168.x.x", port:int=8080, COMMAND:str=""):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as self.SOCKET:
             self.SOCKET.connect((host, port))
             self.SOCKET.sendall(COMMAND.encode())
@@ -31,12 +31,16 @@ class CLIENT:
                     self.DC_SOCKET.connect((DC_HOST, int(DC_PORT)))
                     
                     self.fullMessage: bytes = self.DC_SOCKET.recv(1024)
+                    self.fileName: str = COMMAND.split(" ")[1]
                     
                     self.fileContent, self.RECIEVED_SHA256_HASH = self.fullMessage.split(b"\r\n||")
                     self.CALCULATED_SHA256_HASH: str = sha256_calculator.calculate_sha256(str(self.fileContent.decode()))
 
                     if self.RECIEVED_SHA256_HASH.decode() == self.CALCULATED_SHA256_HASH:
                         print("✅ File Integrity Verified !")
+
+                        with open(f"{self.fileName}", "w+") as file:
+                            file.write(self.fileContent.decode())
 
                     elif self.RECIEVED_SHA256_HASH.decode() != self.CALCULATED_SHA256_HASH:
                         print("❌ File Integrity Failed !")

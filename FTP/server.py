@@ -3,9 +3,10 @@ import threading
 import socket
 
 
+
 class SERVER:
-    def __init__(self, host:str="127.0.0.1", port:int=8080):
-        self.DATA_CONNECTION_HOST: str = "127.0.0.1"
+    def __init__(self, host:str="192.168.x.x", port:int=8080):
+        self.DATA_CONNECTION_HOST: str = "192.168.x.x"
         self.DATA_CONNECTION_PORT: int = 2020
         
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as self.SOCKET:
@@ -31,7 +32,7 @@ class SERVER:
                 self.CONNECTION.close()
 
     def connect_data_connection(self, command: str, fileName: str):
-        DATA_CONNECTION_HOST: str = "127.0.0.1"
+        DATA_CONNECTION_HOST: str = "192.168.x.x"
         DATA_CONNECTION_PORT: int = 2020
         DC = data_connection.DATA_CONNECTION(DATA_CONNECTION_HOST, DATA_CONNECTION_PORT, command, fileName)
 

@@ -34,6 +34,7 @@ class DATA_CONNECTION:
                     with open(f"{self.filename}", "w+") as file:
                         file.write(self.fileContent.decode())
 
+                    print(filename)
                     print("✅ File Integrity Verified !")
 
                 elif self.CALCULATED_SHA256_HASH != self.RECIEVED_SHA256_HASH.decode():
