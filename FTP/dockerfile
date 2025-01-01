@@ -1,0 +1,15 @@
+# Use the official Python base image
+FROM cki/python
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy your FTP server code into the container
+COPY . .
+
+# Expose the FTP control port (21) and data port range (50000-50010)
+EXPOSE 2020 8080
+
+# Run the Python script for the FTP server
+CMD ["python3", "server.py"]
+
